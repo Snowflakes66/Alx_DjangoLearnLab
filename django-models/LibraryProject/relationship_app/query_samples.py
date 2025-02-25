@@ -18,6 +18,6 @@ for book in books:
 
 # Retrieve the librarian for a library
 library = Library.objects.get(name='New York Public Library')
-librarian = library.librarian
+librarian = Librarian.objects.get(library=library)
 print("\nLibrarian for New York Public Library:")
 print(librarian.name)
