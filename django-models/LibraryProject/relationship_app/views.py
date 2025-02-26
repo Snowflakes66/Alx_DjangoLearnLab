@@ -14,8 +14,6 @@ class LibraryDetailView(DetailView):
     model = Library
     template_name = 'library_detail.html'
 
-from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
 
 
 
