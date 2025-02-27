@@ -21,4 +21,14 @@ class LibraryDetailView(DetailView):
 
 
 
+from django.views.generic import DetailView
+
+class LibraryDetailView(DetailView):
+    """
+    Displays details for a specific library, listing all books available in that library.
+    """
+    model = Library
+    template_name = 'relationship_app/library_detail.html'
+    context_object_name = 'library'
+
 
