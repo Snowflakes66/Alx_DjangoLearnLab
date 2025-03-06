@@ -4,8 +4,10 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.views.generic import DetailView
 from .models import Book, Library
+from django.contrib.auth.decorators import user_passes_test
+from django.http import HttpResponseForbidden
 
-# Custom view for user registration
+
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -28,3 +30,38 @@ def list_books(request):
 class LibraryDetailView(DetailView):
     model = Library
     template_name = 'library_detail.html'
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import user_passes_test
+
+def admin_view(request):
+    return render(request, 'admin_view.html')
+
+def librarian_view(request):
+    return render(request, 'librarian_view.html')
+
+def member_view(request):
+    return render(request, 'member_view.html')
+
+def is_admin(user):
+    return user.userprofile.role == 'Admin'
+
+def is_librarian(user):
+    return user.userprofile.role == 'Librarian'
+
+def is_member(user):
+    return user.userprofile.role == 'Member'
+
+admin_view = user_passes_test(is_admin)(admin_view)
+librarian_view = user_passes_test(is_librarian)(librarian_view)
+member_view = user_passes_test(is_member)(member_view)
+
+def role_required(role):
+    def decorator(view_func):
+        def wrapper(request, *args, **kwargs):
+            if request.user.userprofile.role == role:
+                return view_func(request, *args, **kwargs)
+            else:
+                return HttpResponseForbidden()
+        return wrapper
+    return decorator
