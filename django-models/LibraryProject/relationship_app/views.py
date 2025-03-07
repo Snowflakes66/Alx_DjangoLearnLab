@@ -29,7 +29,7 @@ def list_books(request):
 
 class LibraryDetailView(DetailView):
     model = Library
-    template_name = 'relationship_appp/library_detail.html'
+    template_name = 'relationship_app/library_detail.html'
 
 # Helper function to check user role
 def is_admin(user):
