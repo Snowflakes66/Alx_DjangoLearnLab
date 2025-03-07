@@ -16,12 +16,12 @@ urlpatterns = [
     # Library details
     path('library/<int:pk>/', views.LibraryDetailView.as_view(), name='library_detail'),
         # Admin view URL
-    path('admin-view/', views.admin_view, name='admin_view'),
+    path('admin_view/', views.admin_view, name='admin_view'),
 
     # Librarian view URL
-    path('librarian-view/', views.librarian_view, name='librarian_view'),
+    path('librarian_view/', views.librarian_view, name='librarian_view'),
 
     # Member view URL
-    path('member-view/', views.member_view, name='member_view'),
+    path('member_view/', views.member_view, name='member_view'),
 ]
 
