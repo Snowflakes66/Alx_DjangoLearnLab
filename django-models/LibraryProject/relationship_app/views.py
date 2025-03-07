@@ -25,11 +25,11 @@ def home_view(request):
 
 def list_books(request):
     books = Book.objects.all()
-    return render(request, 'list_books.html', {'books': books})
+    return render(request, 'relationship_app/list_books.html', {'books': books})
 
 class LibraryDetailView(DetailView):
     model = Library
-    template_name = 'library_detail.html'
+    template_name = 'relationship_appp/library_detail.html'
 
 # Helper function to check user role
 def is_admin(user):
