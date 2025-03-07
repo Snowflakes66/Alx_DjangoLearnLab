@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.views.generic.detail import DetailView
 from .models import Library, Book
-from django.contrib.auth.decorators import login_required, user_passes_test,  permission_required
+from django.contrib.auth.decorators import permission_required, login_required, user_passes_test
 from .models import UserProfile
 
 
