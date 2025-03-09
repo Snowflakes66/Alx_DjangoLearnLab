@@ -26,7 +26,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-z6t@z-)*)k0b3zqy4l=(y3oapy%y%)rpivkepq!*cu(hw=(6f9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+DEBUG = False
+
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 
 ALLOWED_HOSTS = []
 
@@ -40,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions', 
     'django.contrib.messages',
     'bookshelf',
+    'csp',
     'relationship_app',
     'django.contrib.staticfiles',
    
@@ -145,4 +155,12 @@ LOGIN_REDIRECT_URL = 'home'
 
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
+
+
+ALLOWED_HOSTS = ['example.com', 'www.example.com', 'localhost', '127.0.0.1']
+
+CSP_DEFAULT_SRC = ["'self'"]
+CSP_SCRIPT_SRC = ["'self'", "https://cdn.jsdelivr.net"]
+CSP_STYLE_SRC = ["'self'", "https://fonts.googleapis.com"]
+CSP_FONT_SRC = ["'self'", "https://fonts.gstatic.com"]
 
