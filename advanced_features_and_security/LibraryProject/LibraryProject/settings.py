@@ -33,11 +33,17 @@ SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000  # one year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['example.com', 'www.example.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -163,4 +169,5 @@ CSP_DEFAULT_SRC = ["'self'"]
 CSP_SCRIPT_SRC = ["'self'", "https://cdn.jsdelivr.net"]
 CSP_STYLE_SRC = ["'self'", "https://fonts.googleapis.com"]
 CSP_FONT_SRC = ["'self'", "https://fonts.gstatic.com"]
+
 
