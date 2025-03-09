@@ -2,17 +2,13 @@ from django.db.models import Q
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Book
+from .forms import BookForm, ExampleForm
 from django import forms
 
 @permission_required('bookshelf.can_view', raise_exception=True)
 def book_list(request):
     books = Book.objects.all()
     return render(request, 'book_list.html', {'books': books})
-
-class BookForm(forms.ModelForm):
-    class Meta:
-        model = Book
-        fields = ('title', 'author')
 
 @permission_required('bookshelf.can_create', raise_exception=True)
 def create_book(request):
@@ -49,3 +45,14 @@ def search_books(request):
     query = request.GET.get('q')
     books = Book.objects.filter(Q(title__icontains=query) | Q(author__icontains=query))
     return render(request, 'book_list.html', {'books': books})
+
+def example_form_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            pass
+    else:
+        form = ExampleForm()
+    return render(request, 'example_form.html', {'form': form})
+
