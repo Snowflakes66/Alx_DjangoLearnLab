@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions', 
     'django.contrib.messages',
-    'advanced_features_and_security',
     'bookshelf',
     'relationship_app',
     'django.contrib.staticfiles',
