@@ -14,7 +14,7 @@ class Book(models.Model):
             ('can_delete', 'Can delete books'),
         ]
 
-class customUserManager(BaseUserManager):
+class CustomUserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
@@ -33,11 +33,14 @@ class customUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
         return self.create_user(username, email, password, **extra_fields)
 
-class customUser(AbstractUser):
+class CustomUser(AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
     profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
 
-    objects = customUserManager()
+    objects = CustomUserManager()
 
-class Meta:
-        app_label = 'bookshelf'
+    def __str__(self):
+        return self.username
+
+    class Meta:
+        app_label ='bookshelf'
