@@ -1,10 +1,9 @@
 # advanced-api-project/api/views.py
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, filters
 from .models import Book
 from .serializers import BookSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework import filters
-
+from django_filters import rest_framework as filters
 
 class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
@@ -13,53 +12,32 @@ class BookListView(generics.ListAPIView):
     filterset_fields = ['title', 'author', 'publication_year']
     search_fields = ['title', 'author']
     ordering_fields = ['title', 'publication_year']
-
-
-
+    permission_classes = [permissions.AllowAny]
 
 class BookDetailView(generics.RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [permissions.AllowAny]
 
 class BookCreateView(generics.CreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
 class BookUpdateView(generics.UpdateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user)
 
 class BookDeleteView(generics.DestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-
-
-# advanced-api-project/api/views.py
-class BookCreateView(generics.CreateAPIView):
-    # ...
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
-class BookUpdateView(generics.UpdateAPIView):
-    # ...
-    def perform_update(self, serializer):
-        serializer.save(author=self.request.user)
-
-
-# advanced-api-project/api/views.py
-from rest_framework import permissions
-
-class BookListView(generics.ListAPIView):
-    # ...
-    permission_classes = [permissions.AllowAny]
-
-class BookDetailView(generics.RetrieveAPIView):
-    # ...
-    permission_classes = [permissions.AllowAny]
-
 
 
