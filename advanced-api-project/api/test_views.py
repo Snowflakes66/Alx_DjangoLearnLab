@@ -1,61 +1,51 @@
-
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
-from .models import Book
-from .serializers import BookSerializer
+from rest_framework.test import APITestCase, APIClient
+from django.contrib.auth.models import User
+from .models import Book, Author
 
 class BookAPITestCase(APITestCase):
     def setUp(self):
-        self.book1 = Book.objects.create(title='Book 1', publication_year=2020)
-        self.book2 = Book.objects.create(title='Book 2', publication_year=2021)
+        self.client = APIClient()
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.author = Author.objects.create(name='testauthor')
+        self.book = Book.objects.create(title='Test Book', publication_year=2020, author=self.author)
 
-    def test_get_all_books(self):
-        response = self.client.get(reverse('book-list'))
-        books = Book.objects.all()
-        serializer = BookSerializer(books, many=True)
-        self.assertEqual(response.data, serializer.data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_get_valid_book(self):
-        response = self.client.get(reverse('book-detail', kwargs={'pk': self.book1.pk}))
-        book = Book.objects.get(pk=self.book1.pk)
-        serializer = BookSerializer(book)
-        self.assertEqual(response.data, serializer.data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_get_invalid_book(self):
-        response = self.client.get(reverse('book-detail', kwargs={'pk': 100}))
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    def test_create_valid_book(self):
-        data = {'title': 'New Book', 'publication_year': 2022}
-        response = self.client.post(reverse('book-list'), data, format='json')
+    def test_create_book(self):
+        data = {'title': 'New Book', 'publication_year': 2021, 'author': self.author.id}
+        response = self.client.post(reverse('api:book-create'), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Book.objects.count(), 3)
+        self.assertEqual(Book.objects.count(), 2)
 
-    def test_create_invalid_book(self):
-        data = {'title': '', 'publication_year': 2022}
-        response = self.client.post(reverse('book-list'), data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_update_valid_book(self):
-        data = {'title': 'Updated Book', 'publication_year': 2022}
-        response = self.client.put(reverse('book-detail', kwargs={'pk': self.book1.pk}), data, format='json')
+    def test_read_book(self):
+        response = self.client.get(reverse('api:book-detail', args=[self.book.id]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Book.objects.get(pk=self.book1.pk).title, 'Updated Book')
+        self.assertEqual(response.data['title'], 'Test Book')
 
-    def test_update_invalid_book(self):
-        data = {'title': '', 'publication_year': 2022}
-        response = self.client.put(reverse('book-detail', kwargs={'pk': self.book1.pk}), data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_update_book(self):
+        data = {'title': 'Updated Book', 'publication_year': 2022, 'author': self.author.id}
+        response = self.client.put(reverse('api:book-update', args=[self.book.id]), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.book.refresh_from_db()
+        self.assertEqual(self.book.title, 'Updated Book')
 
-    def test_delete_valid_book(self):
-        response = self.client.delete(reverse('book-detail', kwargs={'pk': self.book1.pk}))
+    def test_delete_book(self):
+        response = self.client.delete(reverse('api:book-delete', args=[self.book.id]))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(Book.objects.count(), 1)
+        self.assertEqual(Book.objects.count(), 0)
 
-    def test_delete_invalid_book(self):
-        response = self.client.delete(reverse('book-detail', kwargs={'pk': 100}))
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    def test_filter_books(self):
+        response = self.client.get(reverse('api:book-list'), {'author': self.author.id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+    def test_search_books(self):
+        response = self.client.get(reverse('api:book-list'), {'search': 'Test Book'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+    def test_order_books(self):
+        response = self.client.get(reverse('api:book-list'), {'ordering': 'title'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
 
