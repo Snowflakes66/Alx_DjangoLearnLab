@@ -10,7 +10,7 @@ class BookAPITestCase(APITestCase):
         self.user = User.objects.create_user(username='testuser', password='testpassword')
         self.author = Author.objects.create(name='testauthor')
         self.book = Book.objects.create(title='Test Book', publication_year=2020, author=self.author)
-        self.client.force_authenticate(user=self.user)
+        self.client.login(username='testuser', password='testpassword')
 
     def test_filter_books(self):
         url = reverse('api:book-list')
