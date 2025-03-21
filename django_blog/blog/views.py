@@ -6,6 +6,7 @@ from .forms import ProfileForm, RegisterForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post
 from .forms import PostForm
+from django import forms
 
 
 def register(request):
@@ -91,11 +92,6 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             return True
         return False
 
-
-
-
-from django import forms
-from .models import Post
 
 class PostForm(forms.ModelForm):
     class Meta:
