@@ -34,7 +34,7 @@ def logout_view(request):
 
 
 @login_required
-def profile_edit(request):
+def edit_profile(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -42,6 +42,6 @@ def profile_edit(request):
             return redirect('profile')
     else:
         form = ProfileForm(instance=request.user)
-    return render(request, 'profile_edit.html', {'form': form})
+    return render(request, 'edit_profile.html', {'form': form})
 
 

@@ -7,7 +7,7 @@ from .views import (
     BookUpdateView,
     BookDeleteView
 )
-
+app_name = 'api'
 urlpatterns = [
     path('books/', BookListView.as_view()),
     path('books/<int:pk>/', BookDetailView.as_view()),
