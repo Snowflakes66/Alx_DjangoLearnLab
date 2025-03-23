@@ -143,5 +143,18 @@ def comment_delete(request, pk):
 
 
 
+class CommentCreateView(CreateView):
+    model = Comment
+    fields = ('content',)
+    success_url = '/'
+
+class CommentUpdateView(UpdateView):
+    model = Comment
+    fields = ('content',)
+    success_url = '/'
+
+class CommentDeleteView(DeleteView):
+    model = Comment
+    success_url = '/'
 
 
