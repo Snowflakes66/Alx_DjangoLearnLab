@@ -17,9 +17,13 @@ urlpatterns = [
     path('post/<pk>/', views.post_detail, name='post_detail'),
     path('comment/<pk>/edit/', views.comment_edit, name='comment_edit'),
     path('comment/<pk>/delete/', views.comment_delete, name='comment_delete'),
-     path('comment/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment_update'),
+    path('comment/<int:pk>/update/', views.CommentUpdateView.as_view(), name='comment_update'),
     path('post/<int:pk>/comments/new/', views.CommentCreateView.as_view(), name='comment_create'),
     path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment_delete'),
+    path('search/', views.search, name='search'),
+    path('', views.post_list, name='post_list'),
+
+
 
     # path('', views.index, name='index'),  # Handle requests to the root URL
 ]

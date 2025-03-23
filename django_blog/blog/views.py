@@ -8,6 +8,8 @@ from .models import Post
 from .forms import PostForm
 from django import forms
 from .models import Comment
+from django.db.models import Q
+
 
 
 def register(request):
@@ -156,5 +158,22 @@ class CommentUpdateView(UpdateView):
 class CommentDeleteView(DeleteView):
     model = Comment
     success_url = '/'
+
+def search(request):
+    query = request.GET.get('q')
+    posts = Post.objects.filter(
+        Q(title__icontains=query) | Q(content__icontains=query) | Q(tags__name__icontains=query)
+    )
+    return render(request, 'blog/search.html', {'posts': posts})
+
+
+
+
+def post_list(request):
+    posts = Post.objects.all()
+    return render(request, 'blog/post_list.html', {'posts': posts})
+
+
+
 
 
