@@ -2,11 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .forms import ProfileForm, RegisterForm
+from .forms import ProfileForm, RegisterForm, CommentForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post
 from .forms import PostForm
 from django import forms
+from .models import Comment
 
 
 def register(request):
@@ -97,6 +98,49 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ('title', 'content')
+
+
+def post_detail(request, pk):
+    post = Post.objects.get(pk=pk)
+    comments = post.comment_set.all()
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            return redirect('post_detail', pk=pk)
+    else:
+        form = CommentForm()
+    return render(request, 'blog/post_detail.html', {'post': post, 'comments': comments, 'form': form})
+
+@login_required
+def comment_edit(request, pk):
+    comment = Comment.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('post_detail', pk=comment.post.pk)
+    else:
+        form = CommentForm(instance=comment)
+    return render(request, 'blog/comment_edit.html', {'form': form})
+
+@login_required
+def comment_delete(request, pk):
+    comment = Comment.objects.get(pk=pk)
+    if request.method == 'POST':
+        comment.delete()
+        return redirect('post_detail', pk=comment.post.pk)
+    return render(request, 'blog/comment_delete.html', {'comment': comment})
+
+
+
+# def index(request):
+#     return render(request, 'blog/index.html')  # Render an HTML template
+
+
 
 
 

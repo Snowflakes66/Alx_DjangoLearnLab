@@ -14,6 +14,9 @@ urlpatterns = [
     path('post/<int:pk>/edit/', views.PostUpdateView.as_view(), name='post_edit'),
     path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post_delete'),
     path('post/<int:pk>/update/', views.PostUpdateView.as_view(), name='post_update'),
-
+    path('post/<pk>/', views.post_detail, name='post_detail'),
+    path('comment/<pk>/edit/', views.comment_edit, name='comment_edit'),
+    path('comment/<pk>/delete/', views.comment_delete, name='comment_delete'),
+    # path('', views.index, name='index'),  # Handle requests to the root URL
 ]
 

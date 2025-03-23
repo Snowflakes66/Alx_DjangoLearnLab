@@ -1,11 +1,27 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>{{ post.title }}</h1>
-  <p>{{ post.content }}</p>
-  <p>Author: {{ post.author }}</p>
-  {% if user == post.author %}
-    <a href="{% url 'post_edit' post.pk %}">Edit</a>
-    <a href="{% url 'post_delete' post.pk %}">Delete</a>
-  {% endif %}
-{% endblock %}
+<!-- post_detail.html -->
+<h1>{{ post.title }}</h1>
+<p>{{ post.content }}</p>
+
+<h2>Comments:</h2>
+<ul>
+    {% for comment in comments %}
+        <li>
+            {{ comment.author.username }}: {{ comment.content }}
+            {% if request.user == comment.author %}
+                <a href="{% url 'comment_edit' comment.pk %}">Edit</a>
+                <a href="{% url 'comment_delete' comment.pk %}">Delete</a>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+<h2>Leave a comment:</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Post comment</button>
+</form>
+
