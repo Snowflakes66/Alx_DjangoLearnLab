@@ -2,6 +2,14 @@ from rest_framework import viewsets, permissions, filters
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.pagination import PageNumberPagination
+from .models import Post, Like
+from .serializers import PostSerializer, LikeSerializer
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.response import Response
+
+
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -34,4 +42,22 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Comment.objects.filter(author=self.request.user)
+
+class LikePostView(APIView):
+    def post(self, request, pk):
+        post = Post.objects.get(pk=pk)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        if not created:
+            return Response({"message": "You already liked this post"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(LikeSerializer(like).data, status=status.HTTP_201_CREATED)
+
+class UnlikePostView(APIView):
+    def post(self, request, pk):
+        post = Post.objects.get(pk=pk)
+        try:
+            like = Like.objects.get(user=request.user, post=post)
+            like.delete()
+            return Response({"message": "You unliked this post"}, status=status.HTTP_200_OK)
+        except Like.DoesNotExist:
+            return Response({"message": "You didn't like this post"}, status=status.HTTP_400_BAD_REQUEST)
 
