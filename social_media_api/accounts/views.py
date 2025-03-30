@@ -10,8 +10,10 @@ from rest_framework.views import APIView
 from .models import User
 from posts.serializers import PostSerializer
 from posts.models import Post
+from .models import CustomUser
 
 
+CustomUser.objects.all()
 
 
 class RegisterAPI(generics.GenericAPIView):
