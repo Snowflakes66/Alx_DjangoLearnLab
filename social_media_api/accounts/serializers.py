@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, get_user_model
 from .models import User
+from posts.models import Post
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,3 +33,10 @@ class LoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Incorrect Credentials")
+
+
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = '__all__'
