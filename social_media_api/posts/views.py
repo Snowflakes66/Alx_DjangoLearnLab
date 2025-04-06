@@ -7,6 +7,9 @@ from .serializers import PostSerializer, LikeSerializer
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from notifications.models import Notification
+
 
 
 
@@ -69,3 +72,22 @@ class FeedView(APIView):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
+
+class LikeView(APIView):
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        if not created:
+            return Response({'error': 'You already liked this post'}, status=status.HTTP_400_BAD_REQUEST)
+        Notification.objects.create(actor=request.user, recipient=post.author, verb='liked', target=post)
+        return Response(status=status.HTTP_201_CREATED)
+
+class UnlikeView(APIView):
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        try:
+            like = Like.objects.get(user=request.user, post=post)
+            like.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Like.DoesNotExist:
+            return Response({'error': 'You did not like this post'}, status=status.HTTP_400_BAD_REQUEST)
