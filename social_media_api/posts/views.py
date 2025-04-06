@@ -61,3 +61,11 @@ class UnlikePostView(APIView):
         except Like.DoesNotExist:
             return Response({"message": "You didn't like this post"}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class FeedView(APIView):
+    def get(self, request):
+        following_users = request.user.following.all()
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
+
