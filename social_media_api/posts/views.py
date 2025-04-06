@@ -1,4 +1,5 @@
 
+
 from rest_framework import viewsets, permissions, filters
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer, LikeSerializer
@@ -42,7 +43,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class LikePostView(APIView):
     def post(self, request, pk):
-        post = Post.objects.get(pk=pk)
+        post = get_object_or_404(Post, pk=pk)
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         if not created:
             return Response({"message": "You already liked this post"}, status=status.HTTP_400_BAD_REQUEST)
@@ -51,7 +52,7 @@ class LikePostView(APIView):
 
 class UnlikePostView(APIView):
     def post(self, request, pk):
-        post = Post.objects.get(pk=pk)
+        post = get_object_or_404(Post, pk=pk)
         try:
             like = Like.objects.get(user=request.user, post=post)
             like.delete()
@@ -68,7 +69,7 @@ class FeedView(APIView):
 
 class LikeView(APIView):
     def post(self, request, pk):
-        post = Post.objects.get(pk=pk)
+        post = get_object_or_404(Post, pk=pk)
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         if not created:
             return Response({'error': 'You already liked this post'}, status=status.HTTP_400_BAD_REQUEST)
@@ -77,7 +78,7 @@ class LikeView(APIView):
 
 class UnlikeView(APIView):
     def post(self, request, pk):
-        post = Post.objects.get(pk=pk)
+        post = get_object_or_404(Post, pk=pk)
         try:
             like = Like.objects.get(user=request.user, post=post)
             like.delete()
